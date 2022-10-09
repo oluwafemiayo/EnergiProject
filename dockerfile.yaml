@@ -2,15 +2,42 @@
 #https://s3-us-west-2.amazonaws.com/download.energi.software/releases/energi3/v3.1.3/energi3-v3.1.3-linux-amd64.tgz
 
 
-FROM openjdk:8-alpine
-RUN apk update && apk add /bin/sh
-RUN mkdir -p /opt/app
-ADD https://s3-us-west-2.amazonaws.com/download.energi.software/releases/energi3/v3.1.3/energi3-v3.1.3-linux-amd64.tgz /opt/app/
-RUN cd /opt/app/ \ && tar -xvzf energi3-v3.1.3-linux-amd64.tgz
-COPY . .
-CMD ["java" ,"-jar"]
+FROM tomcat:8.0.20-jre8
+WORKDIR /usr/local/tomcat/webapps
+ADD https://s3-us-west-2.amazonaws.com/download.energi.software/releases/energi3/v3.1.3/energi3-v3.1.3-linux-amd64.tgz /usr/local/tomcat/webapps
+RUN cd /usr/local/tomcat/webapps \ && tar -xvzf energi3-v3.1.3-linux-amd64.tgz
+CMD ["sh", "catalina.sh", "start"]
 
 
-#Please check Readme for output of docker the file.
+Output:
+
+ubuntu@master:~/energi$ docker build -t energi:v3.1.3 .
+Sending build context to Docker daemon  29.77MB
+Step 1/5 : FROM tomcat:8.0.20-jre8
+ ---> e88a065848be
+Step 2/5 : WORKDIR /usr/local/tomcat/webapps
+ ---> Using cache
+ ---> 02c02c7eaf67
+Step 3/5 : ADD https://s3-us-west-2.amazonaws.com/download.energi.software/releases/energi3/v3.1.3/energi3-v3.1.3-linux-amd64.tgz /usr/local/tomcat/webapps
+Downloading [==================================================>]  9.208MB/9.208MB
+ ---> Using cache
+ ---> bc4799d196c6
+Step 4/5 : RUN cd /usr/local/tomcat/webapps \ && tar -xvzf energi3-v3.1.3-linux-amd64.tgz
+ ---> Running in 4b19e3969695
+energi3-v3.1.3-linux-amd64/bin/energi3
+energi3-v3.1.3-linux-amd64/COPYING
+Removing intermediate container 4b19e3969695
+ ---> 976556a7cbe3
+Step 5/5 : CMD ["sh", "catalina.sh", "start"]
+ ---> Running in 2bb6ef8e97dd
+Removing intermediate container 2bb6ef8e97dd
+ ---> af2b28676141
+Successfully built af2b28676141
+Successfully tagged energi:v3.1.3
+
+
+
+
+#Please check Readme for output image of docker the file.
 
 
